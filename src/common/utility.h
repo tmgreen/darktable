@@ -22,6 +22,12 @@
 #include <string.h>
 #include <gtk/gtk.h>
 
+#ifdef __WIN32__
+#define dt_get_home_dir() g_getenv("USERPROFILE")
+#else
+#define dt_get_home_dir() g_getenv("HOME")
+#endif
+
 /** replace all occurences of pattern by substitute. the returned value has to be freed after use. */
 gchar* dt_util_str_replace(const gchar* string, const gchar* pattern, const gchar* substitute);
 /** count the number of occurences of needle in haystack */

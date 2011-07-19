@@ -22,6 +22,7 @@
 #include "common/collection.h"
 #include "common/exif.h"
 #include "common/fswatch.h"
+#include "common/grealpath.h"
 #include "common/pwstorage/pwstorage.h"
 #ifdef HAVE_GPHOTO2
 #include "common/camera_control.h"
@@ -32,6 +33,7 @@
 #include "common/imageio_module.h"
 #include "common/points.h"
 #include "common/opencl.h"
+#include "common/utility.h"
 #include "develop/imageop.h"
 #include "develop/blend.h"
 #include "libs/lib.h"
@@ -298,7 +300,7 @@ int dt_init(int argc, char *argv[], const int init_gui)
   gchar *conf_db = dt_conf_get_string("database");
   if (conf_db && conf_db[0] != '/')
   {
-    char *homedir = getenv ("HOME");
+    const char *homedir = dt_get_home_dir();
     snprintf (dbfilename,2048,"%s/%s", homedir, conf_db);
     if (g_file_test (dbfilename, G_FILE_TEST_EXISTS))
     {
@@ -321,7 +323,7 @@ int dt_init(int argc, char *argv[], const int init_gui)
   gchar *conf_cache = dt_conf_get_string("cachefile");
   if (conf_cache && conf_cache[0] != '/')
   {
-    char *homedir = getenv ("HOME");
+    const char *homedir = dt_get_home_dir();
     snprintf (cachefilename,2048,"%s/%s",homedir, conf_cache);
     if (g_file_test (cachefilename,G_FILE_TEST_EXISTS))
     {
@@ -477,8 +479,8 @@ int dt_init(int argc, char *argv[], const int init_gui)
     {
       char* current_dir = g_get_current_dir();
       char* tmp_filename = g_build_filename(current_dir, image_to_load, NULL);
-      filename = (char*)g_malloc(sizeof(char)*MAXPATHLEN);
-      if(realpath(tmp_filename, filename) == NULL)
+      filename = g_realpath(tmp_filename);
+      if(filename == NULL)
       {
         dt_control_log(_("found strange path `%s'"), tmp_filename);
         g_free(current_dir);
@@ -624,7 +626,7 @@ void dt_gettime(char *datetime)
 
 void *dt_alloc_align(size_t alignment, size_t size)
 {
-#if defined(__MACH__) || defined(__APPLE__) || (defined(__FreeBSD_version) && __FreeBSD_version < 700013)
+#if defined(__MACH__) || defined(__APPLE__) || (defined(__FreeBSD_version) && __FreeBSD_version < 700013) || defined(__WIN32__)
   return malloc(size);
 #else
   void *ptr = NULL;
@@ -636,7 +638,7 @@ void *dt_alloc_align(size_t alignment, size_t size)
 void
 dt_get_user_config_dir (char *data, size_t bufsize)
 {
-  g_snprintf (data,bufsize,"%s/.config/darktable",getenv("HOME"));
+  g_snprintf (data,bufsize,"%s/.config/darktable",dt_get_home_dir());
   if (g_file_test (data,G_FILE_TEST_EXISTS)==FALSE)
     g_mkdir_with_parents (data,0700);
 }
@@ -644,7 +646,7 @@ dt_get_user_config_dir (char *data, size_t bufsize)
 void
 dt_get_user_cache_dir (char *data, size_t bufsize)
 {
-  g_snprintf (data,bufsize,"%s/.cache/darktable",getenv("HOME"));
+  g_snprintf (data,bufsize,"%s/.cache/darktable",dt_get_home_dir());
   if (g_file_test (data,G_FILE_TEST_EXISTS)==FALSE)
     g_mkdir_with_parents (data,0700);
 }
@@ -653,7 +655,7 @@ dt_get_user_cache_dir (char *data, size_t bufsize)
 void
 dt_get_user_local_dir (char *data, size_t bufsize)
 {
-  g_snprintf(data,bufsize,"%s/.local",getenv("HOME"));
+  g_snprintf(data,bufsize,"%s/.local",dt_get_home_dir());
   if (g_file_test (data,G_FILE_TEST_EXISTS)==FALSE)
     g_mkdir_with_parents (data,0700);
 

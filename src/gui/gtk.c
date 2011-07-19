@@ -18,6 +18,9 @@
 #ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 600 // for setenv
 #endif
+#ifdef __WIN32__
+  #include "common/win.h"
+#endif
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -1226,7 +1229,15 @@ dt_gui_gtk_init(dt_gui_gtk_t *gui, int argc, char *argv[])
   else snprintf(path, 1023, "%s/%s", datadir, themefile ? themefile : "darktable.gtkrc");
   if(!g_file_test(path, G_FILE_TEST_EXISTS))
     snprintf(path, 1023, "%s/%s", DARKTABLE_DATADIR, themefile ? themefile : "darktable.gtkrc");
+#ifdef __WIN32__
+  {
+    gchar *str = g_strjoin("GTK2_RC_FILES=", path, NULL);
+    putenv(str);
+    g_free(str);
+  }
+#else
   (void)setenv("GTK2_RC_FILES", path, 1);
+#endif
 
   GtkWidget *widget;
 
@@ -2573,3 +2584,5 @@ void init_lighttable_box(GtkWidget* container)
   gtk_widget_show(widget);
 
 }
+
+// kate: tab-indents: off; indent-width 2; replace-tabs on; indent-mode cstyle; remove-trailing-space on;

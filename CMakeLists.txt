@@ -42,6 +42,7 @@ if(WIN32)
  message("-- Win32 build detected, setting default features")
   set(USE_GCONF_BACKEND OFF) 
   set(USE_CAMERA_SUPPORT OFF)
+  set(USE_OPENCL OFF)
 endif(WIN32)
 
 # Check if this is source package build

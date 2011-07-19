@@ -32,7 +32,11 @@
 #include <strings.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <glob.h>
+#ifndef __WIN32__
+  #include <glob.h>
+#else
+  #include "common/win.h"
+#endif
 #include <glib/gstdio.h>
 
 static int64_t dt_image_debug_malloc_size = 0;
@@ -109,8 +113,13 @@ void dt_image_synch_all_xmp(const gchar *pathname)
   if(dt_conf_get_bool("write_sidecar_files"))
   {
     // Delete all existing .xmp files.
+#ifdef __WIN32__
+    WIN32_FIND_DATA data;
+    HANDLE handle;
+#else
     glob_t *globbuf = malloc(sizeof(glob_t));
-    
+#endif
+
     gchar *fname = g_strdup(pathname);
     gchar pattern[1024];
     g_snprintf(pattern, 1024, "%s", pathname);
@@ -121,6 +130,16 @@ void dt_image_synch_all_xmp(const gchar *pathname)
     while(*c2 != '.' && c2 > fname) c2--;
     g_snprintf(c1+2, pattern + 1024 - c1 - 2, "%s.xmp", c2);
 
+#ifdef __WIN32__
+    handle = FindFirstFile(pattern, &data);
+    if (handle != INVALID_HANDLE_VALUE)
+    {
+      do
+      {
+        (void)g_unlink(data.cFileName);
+      } while (FindNextFile(handle, &data));
+    }
+#else
     if (!glob(pattern, 0, NULL, globbuf))
     {
       for (int i=0; i < globbuf->gl_pathc; i++)
@@ -129,7 +148,8 @@ void dt_image_synch_all_xmp(const gchar *pathname)
       }
       globfree(globbuf);
     }
-     
+#endif
+
     sqlite3_stmt *stmt;
     gchar *imgfname = g_path_get_basename(pathname);
     gchar *imgpath = g_path_get_dirname(pathname);
@@ -702,7 +722,12 @@ int dt_image_import(const int32_t film_id, const char *filename, gboolean overri
   dt_image_cache_release(img, 'w');
 
   // Search for sidecar files and import them if found.
-  glob_t *globbuf = malloc(sizeof(glob_t));
+#ifdef __WIN32__
+    WIN32_FIND_DATA data;
+    HANDLE handle;
+#else
+    glob_t *globbuf = malloc(sizeof(glob_t));
+#endif
 
   // Add version wildcard
   gchar *fname = g_strdup(filename);
@@ -715,21 +740,37 @@ int dt_image_import(const int32_t film_id, const char *filename, gboolean overri
   while(*c2 != '.' && c2 > fname) c2--;
   snprintf(c1+2, pattern + DT_MAX_PATH - c1 - 2, "%s.xmp", c2);
 
+#ifdef __WIN32__
+  handle = FindFirstFile(pattern, &data);
+  if (handle != INVALID_HANDLE_VALUE)
+  {
+    do
+    {
+#else
   if (!glob(pattern, 0, NULL, globbuf))
   {
     for (int i=0; i < globbuf->gl_pathc; i++)
     {
+#endif
       int newid = -1;
       newid = dt_image_duplicate(id);
 
       dt_image_t *newimg = dt_image_cache_get(newid, 'w');
+#ifdef __WIN32__
+      (void)dt_exif_xmp_read(newimg, data.cFileName, 0);
+#else
       (void)dt_exif_xmp_read(newimg, globbuf->gl_pathv[i], 0);
-
+#endif
       dt_image_cache_flush_no_sidecars(newimg);
       dt_image_cache_release(newimg, 'w');
+#ifdef __WIN32__
+    } while (FindNextFile(handle, &data));
+  }
+#else
     }
     globfree(globbuf);
   }
+#endif
 
   g_free(imgfname);
   g_free(fname);
@@ -1493,6 +1534,5 @@ void dt_image_validate(dt_image_t *image, dt_image_buffer_t mip)
   image->mip_invalid &= ~(1<<mip);
   dt_pthread_mutex_unlock(&(darktable.mipmap_cache->mutex));
 }
-
 
 // kate: tab-indents: off; indent-width 2; replace-tabs on; indent-mode cstyle; remove-trailing-space on;

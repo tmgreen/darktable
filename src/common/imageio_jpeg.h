@@ -24,6 +24,9 @@
 // this fixes a rather annoying, long time bug in libjpeg :(
 #undef HAVE_STDLIB_H
 #undef HAVE_STDDEF_H
+#ifdef __WIN32__
+  #include "common/win.h"
+#endif
 #include <jpeglib.h>
 #undef HAVE_STDLIB_H
 #undef HAVE_STDDEF_H
@@ -55,3 +58,5 @@ int dt_imageio_jpeg_read_header(const char *filename, dt_imageio_jpeg_t *jpg);
 /** reads the jpeg to the (sufficiently allocated) buffer, closes file. */
 int dt_imageio_jpeg_read(dt_imageio_jpeg_t *jpg, uint8_t *out);
 #endif
+
+// kate: tab-indents: off; indent-width 2; replace-tabs on; indent-mode cstyle; remove-trailing-space on;

@@ -124,6 +124,10 @@ foreach(lib ${OUR_LIBS} LensFun GIO GThread GModule Cairo PangoCairo PThread Rsv
   add_definitions(${${lib}_DEFINITIONS})
 endforeach(lib)
 
+if(OPENEXR_FOUND AND WIN32)
+	list(APPEND LIBS "-lHalf") # For some reason this needed library isn't found automagically. :-S
+endif(OPENEXR_FOUND AND WIN32)
+
 find_package(Gettext)
 if(Gettext_FOUND)
   include_directories(${Gettext_INCLUDE_DIRS})
@@ -225,6 +229,12 @@ endif(NOT APPLE)
 if(NOT WIN32)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
 endif(NOT WIN32)
+
+if(WIN32)
+	add_definitions("-DLIBRAW_NODLL")
+	list(APPEND LIBS ws2_32)
+	list(APPEND SOURCES "common/getrusage.c")
+endif(WIN32)
 
 if(NOT BINARY_PACKAGE_BUILD)
 	set(MARCH "-march=native")	

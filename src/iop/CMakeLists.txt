@@ -57,6 +57,8 @@ add_library(borders MODULE "borders.c")
 add_library(nlmeans MODULE "nlmeans.c")
 add_library(colorcontrast MODULE "colorcontrast.c")
 
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -shared")
+
 if(RSVG2_FOUND)
 	add_library(watermark MODULE "watermark.c")
 	set(MODULES ${MODULES} watermark)

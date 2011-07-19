@@ -21,13 +21,20 @@
 #ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 600 // for localtime_r
 #endif
+#ifdef __WIN32__
+  #include "common/win.h"
+#endif
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 #include "common/dtpthread.h"
 #include <time.h>
-#include <sys/resource.h>
 #include <sys/time.h>
+#ifdef HAVE_GETRUSAGE
+  #include <sys/resource.h>
+#else
+  #include "common/getrusage.h"
+#endif
 #include <inttypes.h>
 #include <sqlite3.h>
 #include <glib/gi18n.h>
@@ -233,3 +240,5 @@ static inline float dt_fast_expf(const float x)
 }
 
 #endif
+
+// kate: tab-indents: off; indent-width 2; replace-tabs on; indent-mode cstyle; remove-trailing-space on;

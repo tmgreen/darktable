@@ -11,10 +11,11 @@ add_library(pfm MODULE "pfm.c")
 add_library(tiff MODULE "tiff.c")
 
 if(OPENEXR_FOUND)
-	list(APPEND MODULES ${MODUELS} "exr")
+	list(APPEND MODULES ${MODULES} "exr")
 	add_library(exr MODULE "exr.cc")
 endif(OPENEXR_FOUND)
 
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -shared")
 
 foreach(module ${MODULES})
 	target_link_libraries(${module} ${LIBS})

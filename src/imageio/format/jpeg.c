@@ -31,6 +31,9 @@
 // this fixes a rather annoying, long time bug in libjpeg :(
 #undef HAVE_STDLIB_H
 #undef HAVE_STDDEF_H
+#ifdef __WIN32__
+  #include "common/win.h"
+#endif
 #include <jpeglib.h>
 #undef HAVE_STDLIB_H
 #undef HAVE_STDDEF_H
@@ -665,3 +668,4 @@ void gui_reset (dt_imageio_module_format_t *self)
   dtgtk_slider_set_value(g->quality, dt_conf_get_int("plugins/imageio/format/jpeg/quality"));
 }
 
+// kate: tab-indents: off; indent-width 2; replace-tabs on; indent-mode cstyle; remove-trailing-space on;
