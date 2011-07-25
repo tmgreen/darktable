@@ -101,11 +101,12 @@ dt_imageio_load_modules_format(dt_imageio_t *iio)
   if(!dir) return 1;
   while((d_name = g_dir_read_name(dir)))
   {
-    // get lib*.so
+    // get lib*.[so|dll]
     if(strncmp(d_name, "lib", 3)) continue;
-    if(strncmp(d_name + strlen(d_name) - 3, ".so", 3)) continue;
-    strncpy(plugin_name, d_name+3, strlen(d_name)-6);
-    plugin_name[strlen(d_name)-6] = '\0';
+    size_t name_length = strlen(d_name)-strlen("lib")-strlen(PLUGIN_FILE_ENDING);
+    if(strncmp(d_name + strlen(d_name) - strlen(PLUGIN_FILE_ENDING), PLUGIN_FILE_ENDING, strlen(PLUGIN_FILE_ENDING))) continue;
+    strncpy(plugin_name, d_name+3, name_length);
+    plugin_name[name_length] = '\0';
     module = (dt_imageio_module_format_t *)malloc(sizeof(dt_imageio_module_format_t));
     gchar *libname = g_module_build_path(plugindir, (const gchar *)plugin_name);
     if(dt_imageio_load_module_format(module, libname, plugin_name))
@@ -187,11 +188,12 @@ dt_imageio_load_modules_storage (dt_imageio_t *iio)
   if(!dir) return 1;
   while((d_name = g_dir_read_name(dir)))
   {
-    // get lib*.so
+    // get lib*.[so|dll]
     if(strncmp(d_name, "lib", 3)) continue;
-    if(strncmp(d_name + strlen(d_name) - 3, ".so", 3)) continue;
-    strncpy(plugin_name, d_name+3, strlen(d_name)-6);
-    plugin_name[strlen(d_name)-6] = '\0';
+    size_t name_length = strlen(d_name)-strlen("lib")-strlen(PLUGIN_FILE_ENDING);
+    if(strncmp(d_name + strlen(d_name) - strlen(PLUGIN_FILE_ENDING), PLUGIN_FILE_ENDING, strlen(PLUGIN_FILE_ENDING))) continue;
+    strncpy(plugin_name, d_name+3, name_length);
+    plugin_name[name_length] = '\0';
     module = (dt_imageio_module_storage_t *)malloc(sizeof(dt_imageio_module_storage_t));
     gchar *libname = g_module_build_path(plugindir, (const gchar *)plugin_name);
     if(dt_imageio_load_module_storage(module, libname, plugin_name))

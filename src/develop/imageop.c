@@ -447,11 +447,12 @@ void dt_iop_load_modules_so()
   if(!dir) return;
   while((d_name = g_dir_read_name(dir)))
   {
-    // get lib*.so
+    // get lib*.[so|dll]
     if(strncmp(d_name, "lib", 3)) continue;
-    if(strncmp(d_name + strlen(d_name) - 3, ".so", 3)) continue;
-    strncpy(op, d_name+3, strlen(d_name)-6);
-    op[strlen(d_name)-6] = '\0';
+    size_t name_length = strlen(d_name)-strlen("lib")-strlen(PLUGIN_FILE_ENDING);
+    if(strncmp(d_name + strlen(d_name) - strlen(PLUGIN_FILE_ENDING), PLUGIN_FILE_ENDING, strlen(PLUGIN_FILE_ENDING))) continue;
+    strncpy(op, d_name+3, name_length);
+    op[name_length] = '\0';
     module = (dt_iop_module_so_t *)malloc(sizeof(dt_iop_module_so_t));
     memset(module,0,sizeof(dt_iop_module_so_t));
     gchar *libname = g_module_build_path(plugindir, (const gchar *)op);

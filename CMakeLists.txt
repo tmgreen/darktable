@@ -15,6 +15,12 @@ option(INSTALL_IOP_LEGACY "Also install old plugins we want to get rid of." OFF)
 option(BINARY_PACKAGE_BUILD "Sets march optimization to generic" OFF)
 option(APRIL_FOOLS "Add the \"file manager\" (a shell) to lighttable mode" OFF)
 
+# When cross compiling, CMAKE_INSTALL_PREFIX will point to something like "/opt/darktable", but that's not useful when using the path to load
+# modules on runtime. Then we need something like "C:\Program Files\darktable". Doesn't need to be set when doing regular compiles.
+if(NOT DEFINED RUNTIME_INSTALL_PREFIX)
+	set(RUNTIME_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+endif(NOT DEFINED RUNTIME_INSTALL_PREFIX)
+
 # Generate multi arch triplet
 EXECUTE_PROCESS(COMMAND dpkg-architecture -qDEB_HOST_MULTIARCH OUTPUT_VARIABLE CMAKE_ARCH_TRIPLET OUTPUT_STRIP_TRAILING_WHITESPACE)
 if(CMAKE_ARCH_TRIPLET)
@@ -39,7 +45,7 @@ if(APPLE)
 endif(APPLE)
 
 if(WIN32)
- message("-- Win32 build detected, setting default features")
+  message("-- Win32 build detected, setting default features")
   set(USE_GCONF_BACKEND OFF) 
   set(USE_CAMERA_SUPPORT OFF)
   set(USE_OPENCL OFF)
@@ -81,23 +87,15 @@ if(NOT CMAKE_BUILD_TYPE)
 	SET(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-if(WIN32)
-	set(SHARE_INSTALL "." CACHE STRING "Data file install path. Must be a relative path (from CMAKE_INSTALL_PREFIX), with no trailing slash.")
-else(WIN32)
-	if(NOT SHARE_INSTALL)
-		set(SHARE_INSTALL "share/darktable" CACHE STRING "Data file install path. Must be a relative path (from CMAKE_INSTALL_PREFIX), with no trailing slash.")
-	endif(NOT SHARE_INSTALL)
-endif(WIN32)
+if(NOT SHARE_INSTALL)
+	set(SHARE_INSTALL "share/darktable" CACHE STRING "Data file install path. Must be a relative path (from CMAKE_INSTALL_PREFIX), with no trailing slash.")
+endif(NOT SHARE_INSTALL)
 
 mark_as_advanced(SHARE_INSTALL)
 
-if(WIN32)
-	set(LIB_INSTALL "." CACHE STRING "Library file install path. Must be a relative path (from CMAKE_INSTALL_PREFIX), with no trailing slash.")
-else(WIN32)
-	if(NOT LIB_INSTALL)
-		set( LIB_INSTALL lib${LIB_SUFFIX} CACHE STRING "Library file install path. Must be a relative path (from CMAKE_INSTALL_PREFIX), with no trailing slash.")
-	endif(NOT LIB_INSTALL)
-endif(WIN32)
+if(NOT LIB_INSTALL)
+	set( LIB_INSTALL lib${LIB_SUFFIX} CACHE STRING "Library file install path. Must be a relative path (from CMAKE_INSTALL_PREFIX), with no trailing slash.")
+endif(NOT LIB_INSTALL)
 
 mark_as_advanced(LIB_INSTALL)
 
