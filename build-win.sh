@@ -3,12 +3,11 @@
 # Change this to reflect your setup
 # Also edit Toolchain-mingw32.cmake
 MINGW="/usr/i586-mingw32msvc"
-
+RUNTIME_PREFIX="Z:/opt/darktable-win"
 
 
 export CFLAGS="-mms-bitfields"
-export LDFLAGS="-Wl,--enable-runtime-pseudo-reloc"
-# export LDFLAGS=-Wl,-subsystem,windows
+export LDFLAGS="-Wl,--enable-runtime-pseudo-reloc -Wl,-subsystem,windows"
 export PATH=${MINGW}/bin:$PATH
 export CPATH=${MINGW}/include:${MINGW}/include/OpenEXR/
 export LD_LIBRARY_PATH=${MINGW}/lib
@@ -55,7 +54,7 @@ if [ "$(($MAKE_TASKS < 1))" -eq 1 ]; then
 	MAKE_TASKS=1
 fi
 
-cmake -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DINSTALL_IOP_EXPERIMENTAL=Off -DINSTALL_IOP_LEGACY=Off -DDONT_USE_RAWSPEED=1 .. && make -j $MAKE_TASKS
+cmake -DCMAKE_TOOLCHAIN_FILE=../Toolchain-mingw32.cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_PREFIX} -DRUNTIME_INSTALL_PREFIX=${RUNTIME_PREFIX} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DINSTALL_IOP_EXPERIMENTAL=Off -DINSTALL_IOP_LEGACY=Off -DDONT_USE_RAWSPEED=1 .. && make -j $MAKE_TASKS
 
 if [ $? = 0 ]; then
 	echo "Darktable finished building, to actually install darktable you need to type:"
