@@ -43,6 +43,7 @@ FILE(GLOB SOURCE_FILES
   "develop/imageop.c"
   "develop/pixelpipe.c"
   "develop/blend.c"
+  "develop/tiling.c"
   "dtgtk/*.c" 
   "gui/background_jobs.c"  
   "gui/contrast.c"  
@@ -65,7 +66,8 @@ set(SOURCES ${SOURCE_FILES} ${HEADER_FILES})
 
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/LibRaw)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/LibRaw)
 
 # initial compiler flags
 add_definitions("-DHAVE_CONFIG_H")
@@ -203,7 +205,6 @@ if(OPENEXR_FOUND)
 endif(OPENEXR_FOUND)
 
 if(USE_OPENCL)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external)
   add_definitions("-DHAVE_OPENCL")
 endif(USE_OPENCL)
 
@@ -307,7 +308,7 @@ set_target_properties(lib_darktable PROPERTIES LINKER_LANGUAGE C)
 #
 add_dependencies(lib_darktable libraw_r)
 add_library(libraw_static STATIC IMPORTED)
-set_target_properties(libraw_static PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/LibRaw/liblibraw_r.a)
+set_target_properties(libraw_static PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/external/LibRaw/liblibraw_r.a)
 target_link_libraries(lib_darktable ${LIBS} libraw_static)
 
 # same for librawspeed (can switch it off with -DDONT_USE_RAWSPEED, for macs):
@@ -315,17 +316,17 @@ if(NOT DONT_USE_RAWSPEED)
   add_definitions("-DHAVE_RAWSPEED")
   add_dependencies(lib_darktable rawspeed)
   add_library(rawspeed_static STATIC IMPORTED)
-  set_target_properties(rawspeed_static PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/rawspeed/librawspeed.a)
+  set_target_properties(rawspeed_static PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_BINARY_DIR}/external/rawspeed/librawspeed.a)
   target_link_libraries(lib_darktable ${LIBS} rawspeed_static)
   # compile rawspeed
-  add_subdirectory(rawspeed)
+  add_subdirectory(external/rawspeed)
 endif(NOT DONT_USE_RAWSPEED)
 
 install(TARGETS lib_darktable DESTINATION ${LIB_INSTALL}/darktable)
 list(APPEND LIBS lib_darktable)
 
 # Compile libraw modules
-add_subdirectory(LibRaw)
+add_subdirectory(external/LibRaw)
 
 # Compile views modules
 add_subdirectory(views)
