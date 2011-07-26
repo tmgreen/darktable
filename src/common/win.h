@@ -1,6 +1,11 @@
 #ifndef __WIN_H__
 #define __WIN_H__
 
+#ifdef __MSVCRT_VERSION__
+#undef __MSVCRT_VERSION__
+#endif
+#define __MSVCRT_VERSION__ 0x0700
+
 #undef __STRICT_ANSI__
 #define XMD_H
 #include <windows.h>

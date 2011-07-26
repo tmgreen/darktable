@@ -50,7 +50,7 @@
 #include <sys/param.h>
 #include <unistd.h>
 
-#if !defined(__APPLE__) && !defined(__FreeBSD__)
+#if !defined(__APPLE__) && !defined(__FreeBSD__) || defined(__WIN32__)
 #include <malloc.h>
 #endif
 #ifdef __APPLE__
@@ -629,8 +629,10 @@ void dt_gettime(char *datetime)
 
 void *dt_alloc_align(size_t alignment, size_t size)
 {
-#if defined(__MACH__) || defined(__APPLE__) || (defined(__FreeBSD_version) && __FreeBSD_version < 700013) || defined(__WIN32__)
+#if defined(__MACH__) || defined(__APPLE__) || (defined(__FreeBSD_version) && __FreeBSD_version < 700013)
   return malloc(size);
+#elif defined(__WIN32__)
+  return _aligned_malloc(size, alignment);
 #else
   void *ptr = NULL;
   if(posix_memalign(&ptr, alignment, size)) return NULL;
