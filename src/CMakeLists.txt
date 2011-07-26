@@ -234,6 +234,7 @@ endif(NOT WIN32)
 if(WIN32)
 	add_definitions("-DLIBRAW_NODLL")
 	list(APPEND LIBS ws2_32)
+	list(APPEND LIBS msvcr71) # Needed for _aligned_alloc()
 	list(APPEND SOURCES "common/getrusage.c")
 endif(WIN32)
 
