@@ -29,8 +29,12 @@
 #include <unistd.h>
 #include <assert.h>
 
+#ifndef min
 #define min(a,b) ((a) < (b) ? (a) : (b))
+#endif
+#ifndef max
 #define max(a,b) ((a) > (b) ? (a) : (b))
+#endif
 
 #ifdef HAVE_OPENCL
 
