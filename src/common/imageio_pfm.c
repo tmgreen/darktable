@@ -127,7 +127,7 @@ dt_imageio_retval_t dt_imageio_open_pfm_preview(dt_image_t *img, const char *fil
   }
   free(line);
   dt_imageio_retval_t retv = dt_image_raw_to_preview(img, buf);
-  free(buf);
+  if(buf) dt_free_align(buf);
   fclose(f);
   return retv;
 

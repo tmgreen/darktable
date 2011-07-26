@@ -1117,7 +1117,7 @@ static inline void dt_points_init(dt_points_t *p, const unsigned int num_threads
 
 static inline void dt_points_cleanup(dt_points_t *p)
 {
-  free(p->s[0]);
+  dt_free_align(p->s[0]);
   free(p->s);
 }
 

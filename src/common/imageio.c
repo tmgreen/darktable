@@ -1003,7 +1003,7 @@ int dt_imageio_export(dt_image_t *img, const char *filename, dt_imageio_module_f
 
   dt_dev_pixelpipe_cleanup(&pipe);
   dt_dev_cleanup(&dev);
-  free(moutbuf);
+  if(moutbuf) dt_free_align(moutbuf);
   return res;
 }
 

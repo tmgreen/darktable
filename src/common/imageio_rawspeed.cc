@@ -303,7 +303,7 @@ dt_imageio_open_rawspeed_preview(dt_image_t *img, const char *filename)
   dt_image_raw_to_preview(img, (float *)buf);
 
   // clean up raw stuff.
-  if (buf) free(buf);
+  if (buf) dt_free_align(buf);
   if (d) delete d;
   if (m) delete m;
   dt_image_release(img, DT_IMAGE_FULL, 'w');
@@ -397,7 +397,7 @@ dt_imageio_open_rawspeed_sraw_preview(dt_image_t *img, RawImage r)
 
   dt_image_raw_to_preview(img, buf);
 
-  if(buf) free(buf);
+  if(buf) dt_free_align(buf);
   dt_image_release(img, DT_IMAGE_FULL, 'w');
   return DT_IMAGEIO_OK;
 }

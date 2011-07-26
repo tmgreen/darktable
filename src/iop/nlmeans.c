@@ -342,10 +342,10 @@ void process (struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, void 
   }
 #ifdef SLIDING_WINDOW
   // free shared tmp memory:
-  free(Sa);
+  if(Sa) dt_free_align(Sa);
 #else
   // free the summed area table:
-  free(S);
+  if(S) dt_free_align(S);
 #endif
 }
 

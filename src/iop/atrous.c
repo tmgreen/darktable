@@ -392,9 +392,9 @@ process (struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, void *i, v
       }
     }
 
-  free(detail);
-  free(tmp);
-  free(tmp2);
+  if(detail) dt_free_align(detail);
+  if(tmp) dt_free_align(tmp);
+  if(tmp2) dt_free_align(tmp2);
 }
 
 #ifdef HAVE_OPENCL
@@ -628,7 +628,7 @@ process_cl (struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, cl_mem 
     }
 
   // free device mem
-  if (detail_buffer != NULL) free(detail_buffer);
+  if (detail_buffer != NULL) dt_free_align(detail_buffer);
   if (mdev_in != NULL) dt_opencl_release_mem_object(mdev_in);
   if (mdev_out != NULL) dt_opencl_release_mem_object(mdev_out);
   for(int k=0; k<max_scale; k++)
@@ -636,7 +636,7 @@ process_cl (struct dt_iop_module_t *self, dt_dev_pixelpipe_iop_t *piece, cl_mem 
   return TRUE;
 
 error:
-  if (detail_buffer != NULL) free(detail_buffer);
+  if (detail_buffer != NULL) dt_free_align(detail_buffer);
   if (mdev_in != NULL) dt_opencl_release_mem_object(mdev_in);
   if (mdev_out != NULL) dt_opencl_release_mem_object(mdev_out);
   for(int k=0; k<max_scale; k++)

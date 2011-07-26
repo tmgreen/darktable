@@ -640,6 +640,17 @@ void *dt_alloc_align(size_t alignment, size_t size)
 #endif
 }
 
+void dt_free_align(void *ptr)
+{
+#if defined(__MACH__) || defined(__APPLE__) || (defined(__FreeBSD_version) && __FreeBSD_version < 700013)
+  free(ptr);
+#elif defined(__WIN32__)
+  _aligned_free(ptr);
+#else
+  free(ptr);
+#endif
+}
+
 void
 dt_get_user_config_dir (char *data, size_t bufsize)
 {
