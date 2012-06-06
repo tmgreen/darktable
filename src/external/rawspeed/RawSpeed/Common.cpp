@@ -25,11 +25,15 @@
 #if defined(__unix__) || defined(__MINGW32__)
 
 void* _aligned_malloc(size_t bytes, size_t alignment) {
+#ifdef __WIN32__
+  return _aligned_malloc(bytes, alignment);
+#else
   void* ret= NULL;
   if (0==posix_memalign(&ret, alignment, bytes))
     return ret;
   else
     return NULL;
+#endif
 }
 
 #endif

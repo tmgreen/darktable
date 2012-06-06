@@ -33,7 +33,7 @@
 #ifndef __unix__
 #include <tchar.h>
 #include <io.h>
-#include <Windows.h>
+#include <windows.h>
 #ifndef __MINGW32__
 #include <crtdbg.h>
 #else
