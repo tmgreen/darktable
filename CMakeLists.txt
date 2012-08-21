@@ -18,7 +18,7 @@ option(INSTALL_IOP_EXPERIMENTAL "Also install unstable, unfinished, broken, and 
 option(INSTALL_IOP_LEGACY "Also install old plugins we want to get rid of." OFF)
 option(BINARY_PACKAGE_BUILD "Sets march optimization to generic" OFF)
 option(APRIL_FOOLS "Add the \"file manager\" (a shell) to lighttable mode" OFF)
-option(GTK3_MIGRATION_CHECKS "Help getting darktable ready for GTK3" OFF)
+option(GTK3_MIGRATION_CHECKS "Help getting darktable ready for GTK3" ON)
 option(USE_XMLLINT "Run xmllint to test if darktableconfig.xml is valid" ON)
 
 # Generate multi arch triplet
