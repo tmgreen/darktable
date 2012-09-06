@@ -938,6 +938,15 @@ int dt_exif_xmp_read (dt_image_t *img, const char* filename, const int history_o
       img->legacy_flip.legacy = 0;
     }
 
+    if ((pos=xmpData.findKey(Exiv2::XmpKey("Xmp.darktable.auto_presets_applied"))) != xmpData.end() )
+    {
+      int32_t i = pos->toLong();
+      // set or clear bit in image struct
+      if(i == 1) img->flags |= DT_IMAGE_AUTO_PRESETS_APPLIED;
+      if(i == 0) img->flags &= ~DT_IMAGE_AUTO_PRESETS_APPLIED;
+    } // not found means 0 (old xmp)
+    else img->flags &= ~DT_IMAGE_AUTO_PRESETS_APPLIED;
+
     // history
     Exiv2::XmpData::iterator ver;
     Exiv2::XmpData::iterator en;
@@ -1095,6 +1104,11 @@ dt_exif_xmp_read_data(Exiv2::XmpData &xmpData, const int imgid)
 
   xmpData["Xmp.darktable.xmp_version"] = xmp_version;
   xmpData["Xmp.darktable.raw_params"] = raw_params;
+
+  if(stars & DT_IMAGE_AUTO_PRESETS_APPLIED)
+    xmpData["Xmp.darktable.auto_presets_applied"] = 1;
+  else
+    xmpData["Xmp.darktable.auto_presets_applied"] = 0;
 
   // get tags from db, store in dublin core
   Exiv2::Value::AutoPtr v1 = Exiv2::Value::create(Exiv2::xmpSeq); // or xmpBag or xmpAlt.
