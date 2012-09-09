@@ -71,6 +71,8 @@ void dt_iop_load_default_params(dt_iop_module_t *module)
   memcpy(module->default_blendop_params, &_default_blendop_params, sizeof(dt_develop_blend_params_t));
   memcpy(module->blend_params, &_default_blendop_params, sizeof(dt_develop_blend_params_t));
 
+#if 0 // custom defaults are now disabled, because of confusion with auto-apply presets
+      // as well as non-xmp safety.
   // global default only allowed if the module is not enabled (pure gui convenience)
   // if these user settings would change the history stack secretly, the xmp files
   // would not carry all information and thus not be future proof.
@@ -122,6 +124,7 @@ void dt_iop_load_default_params(dt_iop_module_t *module)
       sqlite3_finalize(stmt);
     }
   }
+#endif
 }
 
 static void
