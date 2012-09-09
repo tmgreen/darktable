@@ -21,6 +21,9 @@
 
 int main (int argc, char *argv[])
 {
+  fprintf(stderr, "this branch is for dev testing only at this stage. it might damage your xmp files and the database permanently. please only test if you know what you're doing.\n");
+  exit(-666);
+
   if(dt_init(argc, argv, 1)) exit(1);
   dt_gui_gtk_run(darktable.gui);
   exit(0);
