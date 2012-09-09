@@ -62,8 +62,6 @@ static dt_develop_blend_params_t _default_blendop_params= {DEVELOP_BLEND_DISABLE
 
 void dt_iop_load_default_params(dt_iop_module_t *module)
 {
-  const void *op_params = NULL;
-  const void *bl_params = NULL;
   memcpy(module->default_params, module->factory_params, module->params_size);
   module->default_enabled = module->factory_enabled;
 
@@ -73,6 +71,10 @@ void dt_iop_load_default_params(dt_iop_module_t *module)
 
 #if 0 // custom defaults are now disabled, because of confusion with auto-apply presets
       // as well as non-xmp safety.
+
+  const void *op_params = NULL;
+  const void *bl_params = NULL;
+
   // global default only allowed if the module is not enabled (pure gui convenience)
   // if these user settings would change the history stack secretly, the xmp files
   // would not carry all information and thus not be future proof.
